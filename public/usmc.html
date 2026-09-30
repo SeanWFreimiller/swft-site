@@ -140,7 +140,7 @@ tr.total td{font-weight:600;border-bottom:0}
 <main class="wrap" id="view"></main>
 
 <script>
-const UPDATED="Sep 30, 2026, 5:56 pm CT"; // bump on every content change
+const UPDATED="Sep 30, 2026, 5:58 pm CT"; // bump on every content change
 const R = { // regions
   vegas:{name:"Las Vegas",c:"--vegas"}, bryce:{name:"Bryce Canyon",c:"--bryce"}, zion:{name:"Zion",c:"--zion"},
   rental:{name:"Mesquite, NV",c:"--rental"}, fire:{name:"Valley of Fire",c:"--fire"}, home:{name:"Home",c:"--home"}
@@ -163,7 +163,7 @@ const L = {
 };
 const DAYS = [
  {n:1,d:"2026-10-03",r:"vegas",title:"Fly in",tz:"Nevada · PDT",
-  stay:{name:"Las Vegas (separate hotels)",conf:"Partly booked · Freimiller: Residence Inn Las Vegas Airport, 7690 S Las Vegas Blvd, check-in 3 pm · Champagne, Fausz: not in the sheet yet"},
+  stay:{name:"Las Vegas (separate hotels)",home:"Las Vegas",conf:"Partly booked · Freimiller: Residence Inn Las Vegas Airport, 7690 S Las Vegas Blvd, check-in 3 pm · Champagne, Fausz: not in the sheet yet"},
   items:[{t:"9:34 am",w:"Champagne land in Vegas",n:"JetBlue B6 1577, departs 6:50 am"},{t:"5:00 pm",w:"Freimillers land in Vegas",n:"Delta from Louisville via Atlanta"},{w:"Fausz arrival",n:"Not in the sheet yet"},{w:"Overnight in Vegas"}],
   notes:["Vegas is 1 hour behind Bryce and Zion."]},
  {n:2,d:"2026-10-04",r:"bryce",title:"Drive to Bryce",tz:"Utah · MDT",
@@ -216,11 +216,11 @@ const DAYS = [
   stay:{name:"Mesquite rental",conf:"Night 2 of 2",link:"rental"},
   items:[{w:"Valley of Fire day trip",n:"Still a question mark in the sheet. No details yet."}]},
  {n:8,d:"2026-10-10",r:"vegas",title:"Back to Vegas",tz:"Nevada · PDT",
-  stay:{name:"Las Vegas (separate hotels)",conf:"Partly booked · Freimiller: Residence Inn Las Vegas Airport, 7690 S Las Vegas Blvd, check-in 3 pm · Champagne, Fausz: not in the sheet yet"},
+  stay:{name:"Las Vegas (separate hotels)",home:"Las Vegas",conf:"Partly booked · Freimiller: Residence Inn Las Vegas Airport, 7690 S Las Vegas Blvd, check-in 3 pm · Champagne, Fausz: not in the sheet yet"},
   items:[{w:"Drive back to Vegas",m:["under 2 hr"]}]},
  {n:9,d:"2026-10-11",r:"home",title:"Fly home",tz:"Nevada · PDT",
   items:[{t:"10:01 am",w:"Champagne: Breeze MX527",n:"Arrives 5:59 pm"},{w:"Fausz flights",n:"Not in the sheet yet"},{w:"Freimillers stay one more night at the Residence Inn",n:"They fly home Monday"}],
-  stay:{name:"Residence Inn Las Vegas Airport (Freimillers only)",conf:"Booked (Freimiller) · check-out noon Mon"}},
+  stay:{name:"Residence Inn Las Vegas Airport (Freimillers only)",home:null,conf:"Booked (Freimiller) · check-out noon Mon"}},
  {n:0,d:"2026-10-12",r:"home",title:"Columbus Day: recovery",muted:true,items:[{t:"12:31 pm",w:"Freimillers fly home",n:"Delta 748 to Atlanta, then Delta 2842 to Louisville, arriving 10:35 pm"},{w:"Recovery :)"}]}
 ];
 const EXTRAS=[["Narrows gear (Zion Outfitter)","$60 per person"],["E-bike rental (Zion Outfitter)","$79 per person"],["Horseback ride","$88.50 per person, 2 hr"],["Zion Hot Springs","$70 per person, 3 hr"],["America the Beautiful Pass","$0"]];
@@ -278,7 +278,7 @@ function home(){
       <button data-go="day${d.n||"x"}">
         <span class="date"><b>${dt(d.d).getDate()}</b><small>${d.d===todayStr?"Today":fmt(d.d,{weekday:"short"})}</small></span>
         <span style="min-width:0"><div class="t">${esc(d.title)}</div>
-          <div class="where"><span class="dot" style="background:${col(d.r)}"></span>${d.n?`Day ${d.n} · `:""}${d.stay?"Sleep: "+esc(d.stay.name):R[d.r].name}</div></span>
+          <div class="where"><span class="dot" style="background:${col(d.r)}"></span>${d.n?`Day ${d.n} · `:""}${d.stay&&d.stay.home!==null?"Sleep: "+esc(d.stay.home||d.stay.name):R[d.r].name}</div></span>
         <span class="chev" aria-hidden="true">›</span>
       </button>
     </li>`).join("")}</ol>
