@@ -105,6 +105,11 @@ section > h3{font-size:14px;font-family:var(--f-body);font-weight:600;letter-spa
 .flag + .flag{margin-top:8px}
 
 table{width:100%;border-collapse:collapse;font-size:15px}
+.lodges{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.lodge{display:grid;grid-template-columns:92px 1fr;gap:14px;padding:12px 2px;border-bottom:1px solid var(--line)}
+.ld{display:grid;align-content:start;gap:2px}.ld b{font-family:var(--f-mono);font-size:14px;font-weight:500;white-space:nowrap}.lw .mono{font-size:14px}.ld small{font-size:12px;color:var(--muted)}
+.lw{min-width:0;display:grid;justify-items:start;gap:3px}.lw b{font-size:16px}.lw .note{font-size:14px;color:var(--muted)}.lw a{font-size:14px}
+.pill{font-size:12px;font-weight:600;border-radius:99px;padding:1px 9px}.pill.ok{background:color-mix(in srgb,var(--rental) 22%,transparent);color:var(--ink)}.pill.todo{background:var(--warn-bg);color:var(--warn-ink)}
 td,th{text-align:left;padding:9px 6px;border-bottom:1px solid var(--line);vertical-align:top}
 th{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
 td.num{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -135,7 +140,7 @@ tr.total td{font-weight:600;border-bottom:0}
 <main class="wrap" id="view"></main>
 
 <script>
-const UPDATED="Sep 30, 2026, 4:06 pm CT"; // bump on every content change
+const UPDATED="Sep 30, 2026, 4:32 pm CT"; // bump on every content change
 const R = { // regions
   vegas:{name:"Las Vegas",c:"--vegas"}, bryce:{name:"Bryce Canyon",c:"--bryce"}, zion:{name:"Zion",c:"--zion"},
   rental:{name:"Mesquite, NV",c:"--rental"}, fire:{name:"Valley of Fire",c:"--fire"}, home:{name:"Home",c:"--home"}
@@ -310,13 +315,19 @@ function day(n){
   </section>`;
 }
 function stays(){
-  const rows=DAYS.filter(d=>d.stay).map(d=>`<tr><td class="mono">${fmt(d.d,{weekday:"short",month:"short",day:"numeric"})}</td><td>${esc(d.stay.name)}${d.stay.link?`<br><a href="${L[d.stay.link][1]}" target="_blank" rel="noopener">Website ↗</a>`:""}</td><td>${esc(d.stay.conf)}</td></tr>`).join("");
+  const groups=[];DAYS.filter(d=>d.stay).forEach(d=>{const g=groups[groups.length-1];if(g&&g.name===d.stay.name&&g.link===d.stay.link){g.days.push(d)}else groups.push({name:d.stay.name,link:d.stay.link,conf:d.stay.conf,days:[d]})});
+  const md=s=>fmt(s,{month:"short",day:"numeric"});
+  const rows=groups.map(g=>{const a=g.days[0],z=g.days[g.days.length-1],n=g.days.length;
+    const raw=g.conf.replace(/\s*·?\s*night \d+ of \d+/i,"").trim();const booked=/^booked/i.test(raw);
+    const detail=raw.replace(/^(booked|not booked yet)\s*·?\s*/i,"").replace(/^\((.*)\)\s*·?\s*/,"$1 · ").replace(/\s*·\s*$/,"");
+    return `<li class="lodge"><div class="ld"><b>${n>1?`${md(a.d)}–${dt(z.d).getDate()}`:md(a.d)}</b><small>${fmt(a.d,{weekday:"short"})} · ${n} night${n>1?"s":""}</small></div>
+      <div class="lw"><b>${esc(g.name)}</b><span class="pill ${booked?"ok":"todo"}">${booked?"Booked":"Not booked"}</span>${detail?`<div class="note">${esc(detail)}</div>`:""}${g.link?`<a href="${L[g.link][1]}" target="_blank" rel="noopener">Website ↗</a>`:""}</div></li>`}).join("");
   $("#view").innerHTML=`${back}<div class="dhead"><div class="eyebrow">Getting around</div><h2>Stays &amp; travel</h2></div>
-  <section><h3>Lodging by night</h3><div class="tscroll"><table><tr><th>Night</th><th>Where</th><th>Status</th></tr>${rows}</table></div></section>
-  <section><h3>Flights</h3><div class="tscroll"><table><tr><th>Couple</th><th>Arrive Oct 3</th><th>Depart Oct 11</th></tr>
-    <tr><td>Champagne</td><td>JetBlue B6 1577<br><span class="mono">6:50 am → 9:34 am</span></td><td>Breeze MX527<br><span class="mono">10:01 am → 5:59 pm</span></td></tr>
-    <tr><td>Fausz</td><td>TBD</td><td>TBD</td></tr>
-    <tr><td>Freimiller</td><td>TBD</td><td>TBD</td></tr></table></div></section>
+  <section><h3>Lodging</h3><ul class="lodges">${rows}</ul></section>
+  <section><h3>Flights</h3><ul class="lodges">
+    <li class="lodge"><div class="ld"><b>Champagne</b></div><div class="lw"><div><span class="note">Arrive Oct 3</span><br>JetBlue B6 1577<br><span class="mono">6:50 → 9:34 am</span></div><div><span class="note">Depart Oct 11</span><br>Breeze MX527<br><span class="mono">10:01 am → 5:59 pm</span></div></div></li>
+    <li class="lodge"><div class="ld"><b>Fausz</b></div><div class="lw"><span class="pill todo">Not in the sheet yet</span></div></li>
+    <li class="lodge"><div class="ld"><b>Freimiller</b></div><div class="lw"><span class="pill todo">Not in the sheet yet</span></div></li></ul></section>
   <section><h3>Rental car</h3><div class="stay"><b>Alamo, booked through Costco Travel</b><span class="conf">Pickup and drop-off details aren't in the sheet yet</span></div></section>
   <p class="foot">Confirmation numbers are kept in the trip spreadsheet, not on this public page.</p>`;
 }
