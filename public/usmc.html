@@ -44,7 +44,8 @@ h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.1
 .hero{display:grid;gap:6px;padding-block:8px 18px}
 .hero h1{font-size:clamp(36px,10vw,52px);font-weight:700;letter-spacing:-.01em}
 .hero .sub{color:var(--muted);font-size:15px}
-.count{font-family:var(--f-mono);font-size:13px;color:var(--accent);font-weight:500}
+.kicker{font-family:var(--f-display);font-weight:500;font-size:clamp(20px,5.5vw,26px);color:var(--muted);line-height:1.1}
+.count{font-family:var(--f-mono);font-size:12px;color:var(--muted);font-weight:500}
 
 /* Route strip: one segment per night, colored by where you sleep */
 .strip{display:grid;grid-template-columns:repeat(9,1fr);gap:3px;margin-block:4px 6px}
@@ -131,6 +132,7 @@ tr.total td{font-weight:600;border-bottom:0}
 <main class="wrap" id="view"></main>
 
 <script>
+const UPDATED="Sep 30, 2026, 3:45 pm CT"; // bump on every content change
 const R = { // regions
   vegas:{name:"Las Vegas",c:"--vegas"}, bryce:{name:"Bryce Canyon",c:"--bryce"}, zion:{name:"Zion",c:"--zion"},
   rental:{name:"Rental house",c:"--rental"}, fire:{name:"Valley of Fire",c:"--fire"}, home:{name:"Home",c:"--home"}
@@ -220,22 +222,16 @@ const todayStr=(()=>{const t=new Date();return `${t.getFullYear()}-${String(t.ge
 const col=r=>`var(${R[r].c})`;
 const link=k=>{const [a,h]=L[k];return `<a href="${h}" target="_blank" rel="noopener">${esc(a)} ↗</a>`};
 
-function countdown(){
-  const start=dt(DAYS[0].d), end=dt(DAYS[8].d), t=dt(todayStr), day=864e5;
-  if(t<start){const n=Math.round((start-t)/day);return n===1?"Leaves tomorrow":`Leaves in ${n} days`}
-  if(t<=end){return `Trip day ${Math.round((t-start)/day)+1} of 9`}
-  return "Trip complete";
-}
 function home(){
   const trip=DAYS.filter(d=>!d.muted);
   const strip=trip.map(d=>`<span style="background:${col(d.r)}" title="${esc(R[d.r].name)}"></span>`).join("");
   const used=[...new Set(trip.map(d=>d.r))];
   $("#view").innerHTML=`
   <header class="hero">
-    <div class="eyebrow">Champagne · Fausz · Freimiller</div>
-    <h1>Bryce, Zion &amp; Valley of Fire</h1>
-    <div class="sub">Sat Oct 3 – Sun Oct 11, 2026 · Fly in and out of Las Vegas</div>
-    <div class="count">${countdown()}</div>
+    <div class="kicker">Fausz, Freimiller &amp;</div>
+    <h1>Champagne on the Rocks</h1>
+    <div class="sub">Bryce · Zion · Valley of Fire<br>Oct 3–11, 2026 · In and out of Vegas</div>
+    <div class="count">Updated ${UPDATED}</div>
   </header>
   <div class="strip" aria-hidden="true">${strip}</div>
   <div class="legend">${used.map(r=>`<span><i style="background:${col(r)}"></i>${R[r].name}</span>`).join("")}</div>
