@@ -140,7 +140,7 @@ tr.total td{font-weight:600;border-bottom:0}
 <main class="wrap" id="view"></main>
 
 <script>
-const UPDATED="Sep 30, 2026, 4:32 pm CT"; // bump on every content change
+const UPDATED="Sep 30, 2026, 4:35 pm CT"; // bump on every content change
 const R = { // regions
   vegas:{name:"Las Vegas",c:"--vegas"}, bryce:{name:"Bryce Canyon",c:"--bryce"}, zion:{name:"Zion",c:"--zion"},
   rental:{name:"Mesquite, NV",c:"--rental"}, fire:{name:"Valley of Fire",c:"--fire"}, home:{name:"Home",c:"--home"}
@@ -164,7 +164,7 @@ const L = {
 const DAYS = [
  {n:1,d:"2026-10-03",r:"vegas",title:"Fly in",tz:"Nevada · PDT",
   stay:{name:"Vegas hotel",conf:"Not booked yet"},
-  items:[{t:"9:34 am",w:"Champagne land in Vegas",n:"JetBlue B6 1577, departs 6:50 am"},{w:"Fausz and Freimiller arrivals",n:"Not in the sheet yet"},{w:"Overnight in Vegas"}],
+  items:[{t:"9:34 am",w:"Champagne land in Vegas",n:"JetBlue B6 1577, departs 6:50 am"},{t:"5:00 pm",w:"Freimillers land in Vegas",n:"Delta from Louisville via Atlanta"},{w:"Fausz arrival",n:"Not in the sheet yet"},{w:"Overnight in Vegas"}],
   notes:["Vegas is 1 hour behind Bryce and Zion."]},
  {n:2,d:"2026-10-04",r:"bryce",title:"Drive to Bryce",tz:"Utah · MDT",
   stay:{name:"Best Western Plus Ruby's Inn",conf:"Booked (Champagne, Freimiller) · check-in 4 pm, check-out 11 am",link:"ruby"},
@@ -218,8 +218,9 @@ const DAYS = [
   stay:{name:"Vegas hotel",conf:"Not booked yet"},
   items:[{w:"Drive back to Vegas",m:["under 2 hr"]}]},
  {n:9,d:"2026-10-11",r:"home",title:"Fly home",tz:"Nevada · PDT",
-  items:[{t:"10:01 am",w:"Champagne: Breeze MX527",n:"Arrives 5:59 pm"},{w:"Fausz and Freimiller flights",n:"Not in the sheet yet"}]},
- {n:0,d:"2026-10-12",r:"home",title:"Columbus Day: recovery",muted:true,items:[{w:"Recovery :)"}]}
+  items:[{t:"10:01 am",w:"Champagne: Breeze MX527",n:"Arrives 5:59 pm"},{w:"Fausz flights",n:"Not in the sheet yet"},{w:"Freimillers stay one more night",n:"They fly home Monday"}],
+  stay:{name:"Vegas hotel (Freimillers only)",conf:"Not booked yet"}},
+ {n:0,d:"2026-10-12",r:"home",title:"Columbus Day: recovery",muted:true,items:[{t:"12:31 pm",w:"Freimillers fly home",n:"Delta 748 to Atlanta, then Delta 2842 to Louisville, arriving 10:35 pm"},{w:"Recovery :)"}]}
 ];
 const EXTRAS=[["Narrows gear (Zion Outfitter)","$60 per person"],["E-bike rental (Zion Outfitter)","$79 per person"],["Horseback ride","$125 per person, 3 hr"],["Zion Hot Springs","$70 per person, 3 hr"],["America the Beautiful Pass","$0"]];
 const PACK_TIP="Dress in layers. Wear the same outer layers every day, because it warms up fast once the sun comes out.";
@@ -325,9 +326,9 @@ function stays(){
   $("#view").innerHTML=`${back}<div class="dhead"><div class="eyebrow">Getting around</div><h2>Stays &amp; travel</h2></div>
   <section><h3>Lodging</h3><ul class="lodges">${rows}</ul></section>
   <section><h3>Flights</h3><ul class="lodges">
-    <li class="lodge"><div class="ld"><b>Champagne</b></div><div class="lw"><div><span class="note">Arrive Oct 3</span><br>JetBlue B6 1577<br><span class="mono">6:50 → 9:34 am</span></div><div><span class="note">Depart Oct 11</span><br>Breeze MX527<br><span class="mono">10:01 am → 5:59 pm</span></div></div></li>
+    <li class="lodge"><div class="ld"><b>Champagne</b></div><div class="lw"><div><span class="note">Arrive Sat Oct 3</span><br>JetBlue B6 1577<br><span class="mono">6:50 → 9:34 am</span></div><div><span class="note">Depart Sun Oct 11</span><br>Breeze MX527<br><span class="mono">10:01 am → 5:59 pm</span></div></div></li>
     <li class="lodge"><div class="ld"><b>Fausz</b></div><div class="lw"><span class="pill todo">Not in the sheet yet</span></div></li>
-    <li class="lodge"><div class="ld"><b>Freimiller</b></div><div class="lw"><span class="pill todo">Not in the sheet yet</span></div></li></ul></section>
+    <li class="lodge"><div class="ld"><b>Freimiller</b></div><div class="lw"><div><span class="note">Arrive Sat Oct 3</span><br>Delta 1481 + 659, Louisville via Atlanta<br><span class="mono">1:37 pm → 5:00 pm</span></div><div><span class="note">Depart Mon Oct 12</span><br>Delta 748 + 2842, via Atlanta<br><span class="mono">12:31 pm → 10:35 pm</span></div></div></li></ul></section>
   <section><h3>Rental car</h3><div class="stay"><b>Alamo, booked through Costco Travel</b><span class="conf">Pickup and drop-off details aren't in the sheet yet</span></div></section>
   <p class="foot">Confirmation numbers are kept in the trip spreadsheet, not on this public page.</p>`;
 }
