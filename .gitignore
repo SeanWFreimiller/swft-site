@@ -1,0 +1,8 @@
+.DS_Store
+**/.DS_Store
+.firebase/
+firebase-debug.log
+*-debug.log
+*.swp
+.vscode/
+.idea/

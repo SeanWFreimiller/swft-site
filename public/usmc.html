@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1f6a64">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Zion Trip">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Zion Trip Agenda</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;700&family=Figtree:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one narrow column. Home = trip strip + day list + four tiles. Tap a row to open its detail view (hash-routed). */
+:root{
+  --bg:#f3efec; --surface:#fffdfb; --ink:#2a2320; --muted:#6f625b; --line:#e3d9d2; --accent:#1f6a64;
+  --vegas:#5d5a8e; --bryce:#d2703f; --zion:#a9433a; --rental:#61814f; --fire:#8a2c1e; --home:#7d7470;
+  --warn-bg:#fbeadc; --warn-ink:#7a3a12;
+  --f-display:"Zilla Slab",Rockwell,"Roboto Slab",Georgia,serif;
+  --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1a1513; --surface:#241e1b; --ink:#f1e8e2; --muted:#b2a39a; --line:#3a312c; --accent:#6cc0b4;
+  --vegas:#9d99d6; --bryce:#ee9565; --zion:#e0766a; --rental:#9dbd88; --fire:#e2684f; --home:#b3aaa5;
+  --warn-bg:#3a2519; --warn-ink:#f3c09c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1a1513; --surface:#241e1b; --ink:#f1e8e2; --muted:#b2a39a; --line:#3a312c; --accent:#6cc0b4;
+  --vegas:#9d99d6; --bryce:#ee9565; --zion:#e0766a; --rental:#9dbd88; --fire:#e2684f; --home:#b3aaa5;
+  --warn-bg:#3a2519; --warn-ink:#f3c09c; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 var(--f-body);margin:0}
+.wrap{max-width:640px;margin:0 auto;padding-inline:16px;padding-block:20px 48px}
+a{color:var(--accent)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.15}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.eyebrow{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600}
+
+/* Hero */
+.hero{display:grid;gap:6px;padding-block:8px 18px}
+.hero h1{font-size:clamp(36px,10vw,52px);font-weight:700;letter-spacing:-.01em}
+.hero .sub{color:var(--muted);font-size:15px}
+.count{font-family:var(--f-mono);font-size:13px;color:var(--accent);font-weight:500}
+
+/* Route strip: one segment per night, colored by where you sleep */
+.strip{display:grid;grid-template-columns:repeat(9,1fr);gap:3px;margin-block:4px 6px}
+.strip span{height:10px;border-radius:2px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:0}
+
+/* Day list */
+.days{list-style:none;margin:22px 0 0;padding:0;border-top:1px solid var(--line)}
+.day{border-bottom:1px solid var(--line)}
+.day button{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:52px 1fr auto;gap:14px;align-items:center;width:100%;padding:14px 4px}
+.day button:hover .t{color:var(--accent)}
+.date{display:grid;justify-items:center;line-height:1}
+.date b{font-family:var(--f-display);font-size:28px;font-weight:700}
+.date small{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+.t{font-weight:600;font-size:16px;min-width:0}
+.where{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);margin-top:2px}
+.dot{width:8px;height:8px;border-radius:50%;flex:none}
+.chev{color:var(--muted);font-size:20px}
+.day.today{background:color-mix(in srgb,var(--accent) 9%,transparent)}
+.day.today .date small{color:var(--accent);font-weight:700}
+.day.muted .t{color:var(--muted);font-weight:500}
+
+/* Tiles */
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:26px}
+.tile{all:unset;box-sizing:border-box;cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;gap:2px}
+.tile:hover{border-color:var(--accent)}
+.tile b{font-family:var(--f-display);font-size:19px}
+.tile span{font-size:13px;color:var(--muted)}
+
+/* Detail views */
+.back{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:6px;color:var(--accent);font-weight:600;font-size:15px;padding:6px 0}
+.dhead{display:grid;gap:4px;padding-block:10px 16px;border-bottom:3px solid var(--band,var(--line))}
+.dhead h2{font-size:clamp(28px,8vw,38px)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:12px;border:1px solid var(--line);border-radius:99px;padding:2px 9px;color:var(--muted);background:var(--surface)}
+.chip.tz{font-family:var(--f-mono)}
+section{margin-top:22px}
+section > h3{font-size:14px;font-family:var(--f-body);font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.stay{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:grid;gap:4px}
+.stay b{font-size:16px}
+.stay .conf{font-size:13px;color:var(--muted)}
+
+.tl{list-style:none;margin:0;padding:0;display:grid}
+.tl li{display:grid;grid-template-columns:96px 1fr;gap:12px;padding:10px 0;border-top:1px dashed var(--line)}
+.tl li:first-child{border-top:0}
+.tl .time{font-family:var(--f-mono);font-size:13px;color:var(--muted);padding-top:2px;font-variant-numeric:tabular-nums}
+.tl .what{min-width:0}
+.tl .what b{font-weight:600}
+.tl .meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px}
+.tl .meta span{font-family:var(--f-mono);font-size:12px;color:var(--ink);background:color-mix(in srgb,var(--band,var(--accent)) 14%,transparent);border-radius:4px;padding:1px 7px}
+.tl .note{font-size:14px;color:var(--muted);margin-top:3px}
+.tl .what a{font-size:14px}
+.notime li,.opt li{grid-template-columns:1fr}.notime .time,.opt .time{display:none}
+.opt{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:4px 14px}
+.flag{background:var(--warn-bg);color:var(--warn-ink);border-radius:8px;padding:10px 12px;font-size:14px}
+.flag + .flag{margin-top:8px}
+
+table{width:100%;border-collapse:collapse;font-size:15px}
+td,th{text-align:left;padding:9px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+td.num{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.total td{font-weight:600;border-bottom:0}
+.tscroll{overflow-x:auto}
+
+.checks{list-style:none;margin:0;padding:0}
+.checks label{display:flex;gap:12px;align-items:center;padding:12px 4px;border-bottom:1px solid var(--line);cursor:pointer}
+.checks input{width:20px;height:20px;accent-color:var(--accent)}
+.checks input:checked + span{text-decoration:line-through;color:var(--muted)}
+
+.links{list-style:none;margin:0;padding:0}
+.links li{border-bottom:1px solid var(--line)}
+.links a{display:flex;justify-content:space-between;gap:12px;padding:13px 4px;text-decoration:none;color:var(--ink)}
+.links a span{color:var(--muted);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:45%}
+.links a:hover b{color:var(--accent)}
+
+.foot{margin-top:34px;font-size:12px;color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){#view{animation:in .18s ease-out}@keyframes in{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:none}}}
+</style>
+
+
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
+</head><body>
+<main class="wrap" id="view"></main>
+
+<script>
+const R = { // regions
+  vegas:{name:"Las Vegas",c:"--vegas"}, bryce:{name:"Bryce Canyon",c:"--bryce"}, zion:{name:"Zion",c:"--zion"},
+  rental:{name:"Rental house",c:"--rental"}, fire:{name:"Valley of Fire",c:"--fire"}, home:{name:"Home",c:"--home"}
+};
+const L = {
+  zionLodge:["Zion Lodge","https://www.zionlodge.com/"],
+  cable:["Cable Mountain Lodge","https://cablemountainlodge.com/"],
+  ruby:["Best Western Plus Ruby's Inn","https://www.bestwestern.com/en_US/book/hotels-in-bryce-canyon-city/best-western-plus-ruby-s-inn/propertyCode.45040.html"],
+  cowboys:["Cowboys & Angels Speakeasy","https://www.cowboysandangelszion.com/"],
+  springs:["Zion Canyon Hot Springs","https://www.zioncanyonhotsprings.com/hot-springs-pools"],
+  outfitter:["Zion Outfitter (gear & bikes)","https://zionoutfitter.com/"],
+  canyonRides:["Horseback in Bryce (Canyon Rides)","https://canyonrides.com/bryce-canyon-horseback-riding/"],
+  horseRides:["Trail ride (horserides.net)","https://horserides.net/horseback-riding-utah/"],
+  spotted:["Spotted Dog","https://flanigans.com/dinner-menu/"],
+  pizza:["Pizza and Noodles","https://zionpizzanoodle.com/"],
+  bryceLodge:["Lodge at Bryce Canyon restaurant","https://www.visitbrycecanyon.com/dining/the-lodge-at-bryce-canyon-restaurant"]
+};
+const DAYS = [
+ {n:1,d:"2026-10-03",r:"vegas",title:"Fly in",tz:"Nevada · PDT",
+  stay:{name:"Vegas hotel",conf:"TBD for all three couples"},
+  items:[{w:"Fly into Las Vegas"},{w:"Overnight in Vegas"}],
+  notes:["Vegas is 1 hour behind Bryce and Zion."]},
+ {n:2,d:"2026-10-04",r:"bryce",title:"Drive to Bryce",tz:"Utah · MDT",
+  stay:{name:"Best Western Plus Ruby's Inn",conf:"Champagne conf. 312561041 · Fausz, Freimiller: not listed",link:"ruby"},
+  items:[
+   {t:"9:00–11:30",w:"Leave Vegas",m:["2 hr 15 min drive"]},
+   {t:"11:30–12:15",w:"Break at River Rock Roasting"},
+   {t:"12:15–2:15",w:"Drive to Bryce"},
+   {t:"2:15–3:30",w:"Bristlecone Loop",m:["1.2 mi RT","easy","~1 hr"]},
+   {t:"4:00–4:30",w:"Check in at Best Western"},
+   {t:"5:00–6:00",w:"Dinner",n:"Option: Lodge at Bryce Canyon",link:"bryceLodge"},
+   {t:"7:09",w:"Sunset at Bryce Point Overlook",n:"Shuttle stop 8"}],
+  options:[
+   {w:"Queens Garden Trail",m:["1.8 mi RT","1–2 hr"],n:"Steep climb back up. The sheet lists it as both easy and moderate."},
+   {w:"Scenic drive through Bryce",m:["38 mi RT","~3 hr"]}],
+  notes:["Clocks jump ahead 1 hour when you cross into Utah. Check whether these times are Vegas or Utah time."]},
+ {n:3,d:"2026-10-05",r:"zion",title:"Horseback in Bryce, drive to Zion",tz:"Utah · MDT",
+  stay:{name:"Zion Lodge",conf:"Night 1 of 3",link:"zionLodge"},
+  items:[
+   {t:"7:30",w:"Breakfast at hotel"},
+   {t:"8:30–12:00",w:"Trail ride into Bryce",m:["~3 hr"],link:"horseRides"},
+   {t:"12:00–1:00",w:"Lunch"},
+   {t:"1:00–2:00",w:"Pine Creek Waterfall (secret hike)",m:["0.7 mi RT","moderate","~1 hr"]},
+   {t:"2:30–4:15",w:"Drive to Zion, grocery stop"},
+   {t:"4:15–4:45",w:"Check in at Zion Lodge"},
+   {t:"~7:00",w:"Canyon Overlook Trail for sunset",m:["1.0 mi RT","moderate","~1 hr"]}],
+  options:[{w:"Instead of the ride: scenic drive through Bryce",m:["38 mi RT","~3 hr"]}],
+  notes:["The overview tab says a 2-hour ride at 10 am; this day's tab says 8:30–12:00. Two different outfitters are linked."]},
+ {n:4,d:"2026-10-06",r:"zion",title:"Emerald Pools and e-bikes",tz:"Utah · MDT",
+  stay:{name:"Zion Lodge",conf:"Night 2 of 3",link:"zionLodge"},
+  items:[
+   {t:"Morning",w:"Emerald Pool Trail from Zion Lodge",m:["2.2 mi RT","easy","~2 hr"]},
+   {t:"Afternoon",w:"E-bike Zion Scenic Drive",m:["30 mi RT","~4 hr"],link:"outfitter"},
+   {t:"Late",w:"Return bikes, pick up Narrows gear",n:"Zion Outfitter",link:"outfitter"}]},
+ {n:5,d:"2026-10-07",r:"zion",title:"The Narrows",tz:"Utah · MDT",
+  stay:{name:"Zion Lodge",conf:"Night 3 of 3",link:"zionLodge"},
+  items:[
+   {t:"Early start",w:"The Narrows",m:["6.0 mi RT","moderate","~5 hr"]},
+   {t:"Afternoon",w:"Zion Canyon Hot Springs",n:"Maybe, if people are up for it",link:"springs"},
+   {t:"Evening",w:"Dinner and speakeasy",n:"Cowboys & Angels",link:"cowboys"}]},
+ {n:6,d:"2026-10-08",r:"rental",title:"Last Zion hikes, move to rental",tz:"Utah · MDT",
+  stay:{name:"Airbnb",conf:"Not booked yet"},
+  items:[
+   {w:"Drive the Zion–Mount Carmel Tunnel"},
+   {w:"Watchman Trail",m:["3.0 mi RT","moderate","2–2.5 hr"]},
+   {w:"Canyon Overlook Trail",m:["1.0 mi RT","easy/moderate","~1 hr"]},
+   {w:"Drive to Airbnb"}]},
+ {n:7,d:"2026-10-09",r:"fire",title:"Valley of Fire day trip",tz:"Nevada · PDT",
+  stay:{name:"Airbnb",conf:"Not booked yet"},
+  items:[{w:"Valley of Fire day trip",n:"No details in the sheet yet"}]},
+ {n:8,d:"2026-10-10",r:"vegas",title:"Back to Vegas",tz:"Nevada · PDT",
+  stay:{name:"Vegas hotel",conf:"TBD"},
+  items:[{w:"Drive back to Vegas",m:["under 2 hr"]}]},
+ {n:9,d:"2026-10-11",r:"home",title:"Fly home",tz:"Nevada · PDT",
+  items:[{t:"10:01",w:"Champagne: Breeze MX527",n:"Departs 10:01 am, arrives 5:59 pm"},{w:"Fausz and Freimiller flights",n:"Not entered yet"}]},
+ {n:0,d:"2026-10-12",r:"home",title:"Columbus Day: recovery",muted:true,items:[{w:"Recovery :)"}]}
+];
+const LODGING=[["Vegas","1 night",300],["Bryce","1 night",285],["Zion","3 nights",1200,"Zion Lodge or Cable Mountain"],["GC","2 nights",700,"Itinerary shows an Airbnb these nights"],["Vegas","1 night",300]];
+const EXTRAS=[["Flights","$600 per person"],["Car rental","$600 per couple"],["America the Beautiful Pass","$80 per couple"],["Narrows gear (Zion Outfitter)","$60 per person"],["E-bike rental (Zion Outfitter)","$79 per person"],["Horseback ride","$125 per person, 3 hr"],["Zion Hot Springs","$70 per person, 3 hr"]];
+const PACK=["Headlamp","Hiking boots"];
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const dt=s=>{const [y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)};
+const fmt=(s,o)=>dt(s).toLocaleDateString("en-US",o);
+const todayStr=(()=>{const t=new Date();return `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,"0")}-${String(t.getDate()).padStart(2,"0")}`})();
+const col=r=>`var(${R[r].c})`;
+const link=k=>{const [a,h]=L[k];return `<a href="${h}" target="_blank" rel="noopener">${esc(a)} ↗</a>`};
+
+function countdown(){
+  const start=dt(DAYS[0].d), end=dt(DAYS[8].d), t=dt(todayStr), day=864e5;
+  if(t<start){const n=Math.round((start-t)/day);return n===1?"Leaves tomorrow":`Leaves in ${n} days`}
+  if(t<=end){return `Trip day ${Math.round((t-start)/day)+1} of 9`}
+  return "Trip complete";
+}
+function home(){
+  const trip=DAYS.filter(d=>!d.muted);
+  const strip=trip.map(d=>`<span style="background:${col(d.r)}" title="${esc(R[d.r].name)}"></span>`).join("");
+  const used=[...new Set(trip.map(d=>d.r))];
+  $("#view").innerHTML=`
+  <header class="hero">
+    <div class="eyebrow">Champagne · Fausz · Freimiller</div>
+    <h1>Bryce, Zion &amp; Valley of Fire</h1>
+    <div class="sub">Sat Oct 3 – Sun Oct 11, 2026 · Fly in and out of Las Vegas</div>
+    <div class="count">${countdown()}</div>
+  </header>
+  <div class="strip" aria-hidden="true">${strip}</div>
+  <div class="legend">${used.map(r=>`<span><i style="background:${col(r)}"></i>${R[r].name}</span>`).join("")}</div>
+  <ol class="days">${DAYS.map(d=>`
+    <li class="day${d.d===todayStr?" today":""}${d.muted?" muted":""}">
+      <button data-go="day${d.n||"x"}">
+        <span class="date"><b>${dt(d.d).getDate()}</b><small>${d.d===todayStr?"Today":fmt(d.d,{weekday:"short"})}</small></span>
+        <span style="min-width:0"><div class="t">${esc(d.title)}</div>
+          <div class="where"><span class="dot" style="background:${col(d.r)}"></span>${d.n?`Day ${d.n} · `:""}${d.stay?"Sleep: "+esc(d.stay.name):R[d.r].name}</div></span>
+        <span class="chev" aria-hidden="true">›</span>
+      </button>
+    </li>`).join("")}</ol>
+  <div class="tiles">
+    <button class="tile" data-go="stays"><b>Stays &amp; flights</b><span>Hotels, confirmations</span></button>
+    <button class="tile" data-go="costs"><b>Costs</b><span>Lodging and extras</span></button>
+    <button class="tile" data-go="packing"><b>Packing</b><span>${PACK.length} items so far</span></button>
+    <button class="tile" data-go="links"><b>Links</b><span>${Object.keys(L).length} places</span></button>
+  </div>
+  <p class="foot">Built from the Zion trip spreadsheet. Items marked TBD aren't filled in there yet.</p>`;
+}
+const back=`<button class="back" data-go="">‹ All days</button>`;
+function item(i){
+  return `<li><div class="time">${i.t?esc(i.t):""}</div><div class="what"><b>${esc(i.w)}</b>
+    ${i.m?`<div class="meta">${i.m.map(x=>`<span>${esc(x)}</span>`).join("")}</div>`:""}
+    ${i.n?`<div class="note">${esc(i.n)}</div>`:""}
+    ${i.link?`<div>${link(i.link)}</div>`:""}</div></li>`;
+}
+function day(n){
+  const d=DAYS.find(x=>String(x.n||"x")===n); if(!d) return home();
+  const i=DAYS.indexOf(d), prev=DAYS[i-1], next=DAYS[i+1];
+  $("#view").style.setProperty("--band",col(d.r));
+  $("#view").innerHTML=`${back}
+  <div class="dhead">
+    <div class="eyebrow">${d.n?`Day ${d.n} · `:""}${fmt(d.d,{weekday:"long",month:"long",day:"numeric"})}</div>
+    <h2>${esc(d.title)}</h2>
+    <div class="chips"><span class="chip">${R[d.r].name}</span>${d.tz?`<span class="chip tz">${d.tz}</span>`:""}</div>
+  </div>
+  ${d.notes?`<section>${d.notes.map(x=>`<div class="flag">${esc(x)}</div>`).join("")}</section>`:""}
+  <section><h3>Plan</h3><ul class="tl${d.items.some(x=>x.t)?"":" notime"}">${d.items.map(item).join("")}</ul></section>
+  ${d.options?`<section><h3>If there's time</h3><ul class="tl opt">${d.options.map(item).join("")}</ul></section>`:""}
+  ${d.stay?`<section><h3>Tonight</h3><div class="stay"><b>${esc(d.stay.name)}</b><span class="conf">${esc(d.stay.conf)}</span>${d.stay.link?link(d.stay.link):""}</div></section>`:""}
+  <section class="chips" style="justify-content:space-between">
+    ${prev?`<button class="back" data-go="day${prev.n||"x"}">‹ ${esc(fmt(prev.d,{weekday:"short",month:"short",day:"numeric"}))}</button>`:"<span></span>"}
+    ${next?`<button class="back" data-go="day${next.n||"x"}">${esc(fmt(next.d,{weekday:"short",month:"short",day:"numeric"}))} ›</button>`:""}
+  </section>`;
+}
+function stays(){
+  const rows=DAYS.filter(d=>d.stay).map(d=>`<tr><td class="mono">${fmt(d.d,{weekday:"short",month:"short",day:"numeric"})}</td><td>${esc(d.stay.name)}${d.stay.link?"<br>"+link(d.stay.link):""}</td><td>${esc(d.stay.conf)}</td></tr>`).join("");
+  $("#view").innerHTML=`${back}<div class="dhead"><div class="eyebrow">Where you sleep</div><h2>Stays &amp; flights</h2></div>
+  <section><h3>Lodging by night</h3><div class="tscroll"><table><tr><th>Night</th><th>Where</th><th>Status</th></tr>${rows}</table></div></section>
+  <section><h3>Flights</h3><div class="tscroll"><table><tr><th>Couple</th><th>Arrive Oct 3</th><th>Depart Oct 11</th></tr>
+    <tr><td>Champagne</td><td>TBD</td><td>Breeze MX527<br><span class="mono">10:01 am → 5:59 pm</span></td></tr>
+    <tr><td>Fausz</td><td>TBD</td><td>TBD</td></tr>
+    <tr><td>Freimiller</td><td>TBD</td><td>TBD</td></tr></table></div></section>`;
+}
+function costs(){
+  const tot=LODGING.reduce((a,r)=>a+r[2],0);
+  $("#view").innerHTML=`${back}<div class="dhead"><div class="eyebrow">Estimates from the sheet</div><h2>Costs</h2></div>
+  <section><h3>Lodging</h3><div class="tscroll"><table><tr><th>Where</th><th>Nights</th><th style="text-align:right">Est.</th></tr>
+  ${LODGING.map(r=>`<tr><td>${esc(r[0])}${r[3]?`<div class="note" style="font-size:13px;color:var(--muted)">${esc(r[3])}</div>`:""}</td><td>${r[1]}</td><td class="num">$${r[2].toLocaleString()}</td></tr>`).join("")}
+  <tr class="total"><td>Total</td><td></td><td class="num">$${tot.toLocaleString()}</td></tr></table></div></section>
+  <section><h3>Everything else</h3><div class="tscroll"><table>${EXTRAS.map(r=>`<tr><td>${esc(r[0])}</td><td class="num">${esc(r[1])}</td></tr>`).join("")}</table></div></section>`;
+}
+function packing(){
+  let saved={}; try{saved=JSON.parse(localStorage.getItem("zion-pack")||"{}")}catch(e){}
+  $("#view").innerHTML=`${back}<div class="dhead"><div class="eyebrow">Essentials</div><h2>Packing</h2></div>
+  <section><ul class="checks">${PACK.map((p,i)=>`<li><label><input type="checkbox" id="pk${i}" data-k="${esc(p)}" ${saved[p]?"checked":""}><span>${esc(p)}</span></label></li>`).join("")}</ul>
+  <p class="foot">Check marks are saved on this phone only.</p></section>`;
+  document.querySelectorAll(".checks input").forEach(cb=>cb.addEventListener("change",()=>{saved[cb.dataset.k]=cb.checked;try{localStorage.setItem("zion-pack",JSON.stringify(saved))}catch(e){}}));
+}
+function links(){
+  $("#view").innerHTML=`${back}<div class="dhead"><div class="eyebrow">Bookmarks</div><h2>Links</h2></div>
+  <section><ul class="links">${Object.values(L).map(([a,h])=>`<li><a href="${h}" target="_blank" rel="noopener"><b>${esc(a)}</b><span>${esc(new URL(h).hostname.replace("www.",""))} ↗</span></a></li>`).join("")}</ul></section>`;
+}
+function route(){
+  const h=location.hash.slice(1);
+  $("#view").style.removeProperty("--band");
+  if(h.startsWith("day")) day(h.slice(3));
+  else ({stays,costs,packing,links}[h]||home)();
+  window.scrollTo(0,0);
+}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-go]");if(!b)return;e.preventDefault();const g=b.dataset.go;
+  if(g) location.hash=g; else {history.pushState(null,"",location.pathname+location.search);route();}});
+window.addEventListener("hashchange",route);
+window.addEventListener("popstate",route);
+route();
+</script>
+
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js");</script>
+</body></html>

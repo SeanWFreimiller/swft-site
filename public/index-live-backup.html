@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWFTech | Data Solutions & Practical AI</title>
+    <style>
+        :root {
+            --primary-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --accent-blue: #0284c7;
+            --accent-green: #16a34a;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+        }
+
+        .hero p {
+            font-size: 1.125rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 3rem auto;
+            line-height: 1.6;
+        }
+
+        .path-container {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2.5rem 2rem;
+            flex: 1;
+            min-width: 300px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            margin-top: 0;
+            margin-bottom: 1rem;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            text-align: center;
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-architect {
+            background-color: var(--accent-blue);
+            color: white;
+        }
+
+        .btn-jumpstart {
+            background-color: var(--accent-green);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .path-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header class="hero">
+            <h1>SWFTech</h1>
+            <p>Transforming complex information into clear business value. Backed by 20+ years of technical experience to help you work smarter, not harder.</p>
+        </header>
+
+        <main class="path-container">
+            <!-- Path A: Enterprise / FTE / Medium Business -->
+            <div class="card">
+                <h2>Data Strategy & Integration</h2>
+                <p>Connect your systems and unlock your data. Ideal for growing businesses that need reliable ways to clean, connect, and analyze data to streamline reporting and drive profitable decisions.</p>
+                <a href="data-architect.html" class="btn btn-architect">See Data Solutions</a>
+            </div>
+
+            <!-- Path B: SMB / Fractional Jumpstart -->
+            <div class="card">
+                <h2>Practical AI Jumpstart</h2>
+                <p>Cut operational costs and automate daily workflows. A tailored approach for local businesses to learn how to safely leverage high-ROI artificial intelligence tools without the enterprise price tag.</p>
+                <a href="swft-practical-ai-jumpstart.html" class="btn btn-jumpstart">Explore the Jumpstart</a>
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>
