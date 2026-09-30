@@ -132,55 +132,57 @@ tr.total td{font-weight:600;border-bottom:0}
 <main class="wrap" id="view"></main>
 
 <script>
-const UPDATED="Sep 30, 2026, 3:45 pm CT"; // bump on every content change
+const UPDATED="Sep 30, 2026, 3:51 pm CT"; // bump on every content change
 const R = { // regions
   vegas:{name:"Las Vegas",c:"--vegas"}, bryce:{name:"Bryce Canyon",c:"--bryce"}, zion:{name:"Zion",c:"--zion"},
-  rental:{name:"Rental house",c:"--rental"}, fire:{name:"Valley of Fire",c:"--fire"}, home:{name:"Home",c:"--home"}
+  rental:{name:"Mesquite, NV",c:"--rental"}, fire:{name:"Valley of Fire",c:"--fire"}, home:{name:"Home",c:"--home"}
 };
 const L = {
   zionLodge:["Zion Lodge","https://www.zionlodge.com/"],
   cable:["Cable Mountain Lodge","https://cablemountainlodge.com/"],
   ruby:["Best Western Plus Ruby's Inn","https://www.bestwestern.com/en_US/book/hotels-in-bryce-canyon-city/best-western-plus-ruby-s-inn/propertyCode.45040.html"],
+  rental:["Mesquite rental (Desert Mountain Vacation Rentals)","https://www.desertmountainvacationrentals.com/listings/445565"],
+  riverRock:["River Rock Roasters","https://riverrockroasters.com/pages/menu-main-location"],
+  bryceLodge:["Lodge at Bryce Canyon restaurant","https://www.visitbrycecanyon.com/dining/the-lodge-at-bryce-canyon-restaurant"],
+  bcPines:["Bryce Canyon Pines","https://bcpines.com/dinner/"],
+  horseRides:["Trail ride (horserides.net)","https://horserides.net/horseback-riding-utah/"],
+  canyonRides:["Horseback in Bryce (Canyon Rides)","https://canyonrides.com/bryce-canyon-horseback-riding/"],
   cowboys:["Cowboys & Angels Speakeasy","https://www.cowboysandangelszion.com/"],
   springs:["Zion Canyon Hot Springs","https://www.zioncanyonhotsprings.com/hot-springs-pools"],
   outfitter:["Zion Outfitter (gear & bikes)","https://zionoutfitter.com/"],
-  canyonRides:["Horseback in Bryce (Canyon Rides)","https://canyonrides.com/bryce-canyon-horseback-riding/"],
-  horseRides:["Trail ride (horserides.net)","https://horserides.net/horseback-riding-utah/"],
   spotted:["Spotted Dog","https://flanigans.com/dinner-menu/"],
-  pizza:["Pizza and Noodles","https://zionpizzanoodle.com/"],
-  bryceLodge:["Lodge at Bryce Canyon restaurant","https://www.visitbrycecanyon.com/dining/the-lodge-at-bryce-canyon-restaurant"]
+  pizza:["Pizza and Noodles","https://zionpizzanoodle.com/"]
 };
 const DAYS = [
  {n:1,d:"2026-10-03",r:"vegas",title:"Fly in",tz:"Nevada · PDT",
-  stay:{name:"Vegas hotel",conf:"TBD for all three couples"},
-  items:[{w:"Fly into Las Vegas"},{w:"Overnight in Vegas"}],
+  stay:{name:"Vegas hotel",conf:"Not booked yet"},
+  items:[{t:"9:34 am",w:"Champagne land in Vegas",n:"JetBlue B6 1577, departs 6:50 am"},{w:"Fausz and Freimiller arrivals",n:"Not in the sheet yet"},{w:"Overnight in Vegas"}],
   notes:["Vegas is 1 hour behind Bryce and Zion."]},
  {n:2,d:"2026-10-04",r:"bryce",title:"Drive to Bryce",tz:"Utah · MDT",
-  stay:{name:"Best Western Plus Ruby's Inn",conf:"Champagne conf. 312561041 · Fausz, Freimiller: not listed",link:"ruby"},
+  stay:{name:"Best Western Plus Ruby's Inn",conf:"Booked (Champagne)",link:"ruby"},
   items:[
    {t:"9:00–11:30",w:"Leave Vegas",m:["2 hr 15 min drive"]},
-   {t:"11:30–12:15",w:"Break at River Rock Roasting"},
+   {t:"11:30–12:15",w:"Break at River Rock Roasters",link:"riverRock"},
    {t:"12:15–2:15",w:"Drive to Bryce"},
-   {t:"2:15–3:30",w:"Bristlecone Loop",m:["1.2 mi RT","easy","~1 hr"]},
+   {t:"2:15–3:30",w:"Bristlecone Loop",m:["1 mi","easy","30–60 min"]},
    {t:"4:00–4:30",w:"Check in at Best Western"},
-   {t:"5:00–6:00",w:"Dinner",n:"Option: Lodge at Bryce Canyon",link:"bryceLodge"},
+   {t:"5:00–6:00",w:"Dinner",n:"Two options:",links:["bryceLodge","bcPines"]},
    {t:"7:09",w:"Sunset at Bryce Point Overlook",n:"Shuttle stop 8"}],
-  options:[
-   {w:"Queens Garden Trail",m:["1.8 mi RT","1–2 hr"],n:"Steep climb back up. The sheet lists it as both easy and moderate."},
-   {w:"Scenic drive through Bryce",m:["38 mi RT","~3 hr"]}],
   notes:["Clocks jump ahead 1 hour when you cross into Utah. Check whether these times are Vegas or Utah time."]},
  {n:3,d:"2026-10-05",r:"zion",title:"Horseback in Bryce, drive to Zion",tz:"Utah · MDT",
-  stay:{name:"Zion Lodge",conf:"Night 1 of 3",link:"zionLodge"},
+  stay:{name:"Zion Lodge",conf:"Booked (Champagne) · night 1 of 3",link:"zionLodge"},
   items:[
    {t:"7:30",w:"Breakfast at hotel"},
-   {t:"8:30–12:00",w:"Trail ride into Bryce",m:["~3 hr"],link:"horseRides"},
+   {t:"8:30–12:00",w:"Trail ride into Bryce",m:["~3 hr"],n:"Not riding? See other things to do in Bryce below.",link:"horseRides"},
    {t:"12:00–1:00",w:"Lunch"},
    {t:"1:00–2:00",w:"Pine Creek Waterfall (secret hike)",m:["0.7 mi RT","moderate","~1 hr"]},
    {t:"2:30–4:15",w:"Drive to Zion, grocery stop"},
    {t:"4:15–4:45",w:"Check in at Zion Lodge"},
    {t:"~7:00",w:"Canyon Overlook Trail for sunset",m:["1.0 mi RT","moderate","~1 hr"]}],
-  options:[{w:"Instead of the ride: scenic drive through Bryce",m:["38 mi RT","~3 hr"]}],
-  notes:["The overview tab says a 2-hour ride at 10 am; this day's tab says 8:30–12:00. Two different outfitters are linked."]},
+  optTitle:"Other things to do in Bryce",
+  options:[
+   {w:"Scenic drive through Bryce",m:["38 mi RT","~3 hr"]},
+   {w:"Queens Garden Trail",m:["moderate","1–2 hr"],n:"Steep climb back up."}]},
  {n:4,d:"2026-10-06",r:"zion",title:"Emerald Pools and e-bikes",tz:"Utah · MDT",
   stay:{name:"Zion Lodge",conf:"Night 2 of 3",link:"zionLodge"},
   items:[
@@ -193,25 +195,25 @@ const DAYS = [
    {t:"Early start",w:"The Narrows",m:["6.0 mi RT","moderate","~5 hr"]},
    {t:"Afternoon",w:"Zion Canyon Hot Springs",n:"Maybe, if people are up for it",link:"springs"},
    {t:"Evening",w:"Dinner and speakeasy",n:"Cowboys & Angels",link:"cowboys"}]},
- {n:6,d:"2026-10-08",r:"rental",title:"Last Zion hikes, move to rental",tz:"Utah · MDT",
-  stay:{name:"Airbnb",conf:"Not booked yet"},
+ {n:6,d:"2026-10-08",r:"rental",title:"Last Zion hikes, drive to Mesquite",tz:"Utah → Nevada",
+  stay:{name:"Mesquite rental",conf:"Booked · 950 Santa Fe Dr, Mesquite, NV",link:"rental"},
   items:[
    {w:"Drive the Zion–Mount Carmel Tunnel"},
    {w:"Watchman Trail",m:["3.0 mi RT","moderate","2–2.5 hr"]},
    {w:"Canyon Overlook Trail",m:["1.0 mi RT","easy/moderate","~1 hr"]},
-   {w:"Drive to Airbnb"}]},
- {n:7,d:"2026-10-09",r:"fire",title:"Valley of Fire day trip",tz:"Nevada · PDT",
-  stay:{name:"Airbnb",conf:"Not booked yet"},
-  items:[{w:"Valley of Fire day trip",n:"No details in the sheet yet"}]},
+   {w:"Drive to the Mesquite rental"}],
+  notes:["Mesquite is in Nevada, so clocks go back 1 hour on the drive."]},
+ {n:7,d:"2026-10-09",r:"fire",title:"Valley of Fire day trip (maybe)",tz:"Nevada · PDT",
+  stay:{name:"Mesquite rental",conf:"Night 2 of 2",link:"rental"},
+  items:[{w:"Valley of Fire day trip",n:"Still a question mark in the sheet. No details yet."}]},
  {n:8,d:"2026-10-10",r:"vegas",title:"Back to Vegas",tz:"Nevada · PDT",
-  stay:{name:"Vegas hotel",conf:"TBD"},
+  stay:{name:"Vegas hotel",conf:"Not booked yet"},
   items:[{w:"Drive back to Vegas",m:["under 2 hr"]}]},
  {n:9,d:"2026-10-11",r:"home",title:"Fly home",tz:"Nevada · PDT",
-  items:[{t:"10:01",w:"Champagne: Breeze MX527",n:"Departs 10:01 am, arrives 5:59 pm"},{w:"Fausz and Freimiller flights",n:"Not entered yet"}]},
+  items:[{t:"10:01 am",w:"Champagne: Breeze MX527",n:"Arrives 5:59 pm"},{w:"Fausz and Freimiller flights",n:"Not in the sheet yet"}]},
  {n:0,d:"2026-10-12",r:"home",title:"Columbus Day: recovery",muted:true,items:[{w:"Recovery :)"}]}
 ];
-const LODGING=[["Vegas","1 night",300],["Bryce","1 night",285],["Zion","3 nights",1200,"Zion Lodge or Cable Mountain"],["GC","2 nights",700,"Itinerary shows an Airbnb these nights"],["Vegas","1 night",300]];
-const EXTRAS=[["Flights","$600 per person"],["Car rental","$600 per couple"],["America the Beautiful Pass","$80 per couple"],["Narrows gear (Zion Outfitter)","$60 per person"],["E-bike rental (Zion Outfitter)","$79 per person"],["Horseback ride","$125 per person, 3 hr"],["Zion Hot Springs","$70 per person, 3 hr"]];
+const EXTRAS=[["Narrows gear (Zion Outfitter)","$60 per person"],["E-bike rental (Zion Outfitter)","$79 per person"],["Horseback ride","$125 per person, 3 hr"],["Zion Hot Springs","$70 per person, 3 hr"],["America the Beautiful Pass","$0"]];
 const PACK=["Headlamp","Hiking boots"];
 
 const $=s=>document.querySelector(s);
@@ -245,8 +247,8 @@ function home(){
       </button>
     </li>`).join("")}</ol>
   <div class="tiles">
-    <button class="tile" data-go="stays"><b>Stays &amp; flights</b><span>Hotels, confirmations</span></button>
-    <button class="tile" data-go="costs"><b>Costs</b><span>Lodging and extras</span></button>
+    <button class="tile" data-go="stays"><b>Stays &amp; travel</b><span>Hotels, flights, car</span></button>
+    <button class="tile" data-go="costs"><b>Costs</b><span>Activity prices</span></button>
     <button class="tile" data-go="packing"><b>Packing</b><span>${PACK.length} items so far</span></button>
     <button class="tile" data-go="links"><b>Links</b><span>${Object.keys(L).length} places</span></button>
   </div>
@@ -257,7 +259,7 @@ function item(i){
   return `<li><div class="time">${i.t?esc(i.t):""}</div><div class="what"><b>${esc(i.w)}</b>
     ${i.m?`<div class="meta">${i.m.map(x=>`<span>${esc(x)}</span>`).join("")}</div>`:""}
     ${i.n?`<div class="note">${esc(i.n)}</div>`:""}
-    ${i.link?`<div>${link(i.link)}</div>`:""}</div></li>`;
+    ${i.link?`<div>${link(i.link)}</div>`:""}${i.links?`<div class="chips" style="gap:4px 12px">${i.links.map(link).join("")}</div>`:""}</div></li>`;
 }
 function day(n){
   const d=DAYS.find(x=>String(x.n||"x")===n); if(!d) return home();
@@ -271,7 +273,7 @@ function day(n){
   </div>
   ${d.notes?`<section>${d.notes.map(x=>`<div class="flag">${esc(x)}</div>`).join("")}</section>`:""}
   <section><h3>Plan</h3><ul class="tl${d.items.some(x=>x.t)?"":" notime"}">${d.items.map(item).join("")}</ul></section>
-  ${d.options?`<section><h3>If there's time</h3><ul class="tl opt">${d.options.map(item).join("")}</ul></section>`:""}
+  ${d.options?`<section><h3>${esc(d.optTitle||"If there's time")}</h3><ul class="tl opt">${d.options.map(item).join("")}</ul></section>`:""}
   ${d.stay?`<section><h3>Tonight</h3><div class="stay"><b>${esc(d.stay.name)}</b><span class="conf">${esc(d.stay.conf)}</span>${d.stay.link?link(d.stay.link):""}</div></section>`:""}
   <section class="chips" style="justify-content:space-between">
     ${prev?`<button class="back" data-go="day${prev.n||"x"}">‹ ${esc(fmt(prev.d,{weekday:"short",month:"short",day:"numeric"}))}</button>`:"<span></span>"}
@@ -279,21 +281,19 @@ function day(n){
   </section>`;
 }
 function stays(){
-  const rows=DAYS.filter(d=>d.stay).map(d=>`<tr><td class="mono">${fmt(d.d,{weekday:"short",month:"short",day:"numeric"})}</td><td>${esc(d.stay.name)}${d.stay.link?"<br>"+link(d.stay.link):""}</td><td>${esc(d.stay.conf)}</td></tr>`).join("");
-  $("#view").innerHTML=`${back}<div class="dhead"><div class="eyebrow">Where you sleep</div><h2>Stays &amp; flights</h2></div>
+  const rows=DAYS.filter(d=>d.stay).map(d=>`<tr><td class="mono">${fmt(d.d,{weekday:"short",month:"short",day:"numeric"})}</td><td>${esc(d.stay.name)}${d.stay.link?`<br><a href="${L[d.stay.link][1]}" target="_blank" rel="noopener">Website ↗</a>`:""}</td><td>${esc(d.stay.conf)}</td></tr>`).join("");
+  $("#view").innerHTML=`${back}<div class="dhead"><div class="eyebrow">Getting around</div><h2>Stays &amp; travel</h2></div>
   <section><h3>Lodging by night</h3><div class="tscroll"><table><tr><th>Night</th><th>Where</th><th>Status</th></tr>${rows}</table></div></section>
   <section><h3>Flights</h3><div class="tscroll"><table><tr><th>Couple</th><th>Arrive Oct 3</th><th>Depart Oct 11</th></tr>
-    <tr><td>Champagne</td><td>TBD</td><td>Breeze MX527<br><span class="mono">10:01 am → 5:59 pm</span></td></tr>
+    <tr><td>Champagne</td><td>JetBlue B6 1577<br><span class="mono">6:50 am → 9:34 am</span></td><td>Breeze MX527<br><span class="mono">10:01 am → 5:59 pm</span></td></tr>
     <tr><td>Fausz</td><td>TBD</td><td>TBD</td></tr>
-    <tr><td>Freimiller</td><td>TBD</td><td>TBD</td></tr></table></div></section>`;
+    <tr><td>Freimiller</td><td>TBD</td><td>TBD</td></tr></table></div></section>
+  <section><h3>Rental car</h3><div class="stay"><b>Alamo, booked through Costco Travel</b><span class="conf">Pickup and drop-off details aren't in the sheet yet</span></div></section>
+  <p class="foot">Confirmation numbers are kept in the trip spreadsheet, not on this public page.</p>`;
 }
 function costs(){
-  const tot=LODGING.reduce((a,r)=>a+r[2],0);
-  $("#view").innerHTML=`${back}<div class="dhead"><div class="eyebrow">Estimates from the sheet</div><h2>Costs</h2></div>
-  <section><h3>Lodging</h3><div class="tscroll"><table><tr><th>Where</th><th>Nights</th><th style="text-align:right">Est.</th></tr>
-  ${LODGING.map(r=>`<tr><td>${esc(r[0])}${r[3]?`<div class="note" style="font-size:13px;color:var(--muted)">${esc(r[3])}</div>`:""}</td><td>${r[1]}</td><td class="num">$${r[2].toLocaleString()}</td></tr>`).join("")}
-  <tr class="total"><td>Total</td><td></td><td class="num">$${tot.toLocaleString()}</td></tr></table></div></section>
-  <section><h3>Everything else</h3><div class="tscroll"><table>${EXTRAS.map(r=>`<tr><td>${esc(r[0])}</td><td class="num">${esc(r[1])}</td></tr>`).join("")}</table></div></section>`;
+  $("#view").innerHTML=`${back}<div class="dhead"><div class="eyebrow">Prices from the sheet</div><h2>Activity costs</h2></div>
+  <section><div class="tscroll"><table>${EXTRAS.map(r=>`<tr><td>${esc(r[0])}</td><td class="num">${esc(r[1])}</td></tr>`).join("")}</table></div></section>`;
 }
 function packing(){
   let saved={}; try{saved=JSON.parse(localStorage.getItem("zion-pack")||"{}")}catch(e){}
