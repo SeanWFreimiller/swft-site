@@ -112,8 +112,11 @@ tr.total td{font-weight:600;border-bottom:0}
 .tscroll{overflow-x:auto}
 
 .checks{list-style:none;margin:0;padding:0}
-.checks label{display:flex;gap:12px;align-items:center;padding:12px 4px;border-bottom:1px solid var(--line);cursor:pointer}
-.checks input{width:20px;height:20px;accent-color:var(--accent)}
+.checks label{display:flex;gap:12px;align-items:flex-start;padding:12px 4px;border-bottom:1px solid var(--line);cursor:pointer}
+.checks input{flex:none;margin-top:2px;width:20px;height:20px;accent-color:var(--accent)}
+.checks span small{display:block;font-size:13px;color:var(--muted)}
+.pc{font-family:var(--f-mono);letter-spacing:0;text-transform:none;font-weight:400;margin-left:6px}
+.tip{border-left:3px solid var(--accent);padding:4px 0 4px 12px;font-size:15px}
 .checks input:checked + span{text-decoration:line-through;color:var(--muted)}
 
 .links{list-style:none;margin:0;padding:0}
@@ -132,7 +135,7 @@ tr.total td{font-weight:600;border-bottom:0}
 <main class="wrap" id="view"></main>
 
 <script>
-const UPDATED="Sep 30, 2026, 3:51 pm CT"; // bump on every content change
+const UPDATED="Sep 30, 2026, 4:00 pm CT"; // bump on every content change
 const R = { // regions
   vegas:{name:"Las Vegas",c:"--vegas"}, bryce:{name:"Bryce Canyon",c:"--bryce"}, zion:{name:"Zion",c:"--zion"},
   rental:{name:"Mesquite, NV",c:"--rental"}, fire:{name:"Valley of Fire",c:"--fire"}, home:{name:"Home",c:"--home"}
@@ -214,7 +217,33 @@ const DAYS = [
  {n:0,d:"2026-10-12",r:"home",title:"Columbus Day: recovery",muted:true,items:[{w:"Recovery :)"}]}
 ];
 const EXTRAS=[["Narrows gear (Zion Outfitter)","$60 per person"],["E-bike rental (Zion Outfitter)","$79 per person"],["Horseback ride","$125 per person, 3 hr"],["Zion Hot Springs","$70 per person, 3 hr"],["America the Beautiful Pass","$0"]];
-const PACK=["Headlamp","Hiking boots"];
+const PACK_TIP="Dress in layers. Wear the same outer layers every day, because it warms up fast once the sun comes out.";
+const PACK=[
+ {g:"Don't forget",items:[["America the Beautiful Pass"]]},
+ {g:"Clothes",items:[
+  ["Base layer: T-shirts, shorts, leggings","Skip jeans for hiking. They're heavy and slow to dry."],
+  ["Light layer: long-sleeve tees, Cuddl Duds or sun shirts"],
+  ["Warm layer: light fleece or sweatshirt"],
+  ["Outer layer: wind/rain shell and a puffer coat"],
+  ["Gloves and a beanie","For sunrises"],
+  ["Undergarments"],["PJs"],
+  ["Socks","Bring extras"],
+  ["Swimsuit and cover-up"],
+  ["Dinner outfits","Jeans and nicer T-shirts. Just a couple."]]},
+ {g:"Shoes",items:[["Sneakers"],["Hiking shoes with good tread"],["Dinner sandals or shoes"],["Flip-flops"]]},
+ {g:"Daypack",items:[
+  ["Headlamp","Use the red light to avoid light pollution"],
+  ["Water: two or three 32 oz bottles each, or a CamelBak"],
+  ["Electrolytes"],
+  ["WAG bag"],
+  ["Baggies with single-use TP or wipes","Pack a couple"],
+  ["Multi-purpose tool"],
+  ["Travel snacks: nuts, bars"]]},
+ {g:"Gear",items:[["Hat"],["Sunglasses"],["Hiking poles"],["Dry bag for your phone"],["Dry bag for the Narrows"],["Wet bag for your swimsuit, plus a hanger to dry it"],["Frogg Toggs"],["Hot Hands"],["Insulated bottle"],["Coffee mug"],["Headphones"],["External charger packs"],["Baggies"],["Trash bags"]]},
+ {g:"Health & first aid",items:[["Sunscreen"],["Lip balm with sunscreen"],["Small first aid kit"],["Tylenol"],["Medication"],["Hand sanitizer"],["Small bug spray or wipes"],["Antibacterial wipes"],["Eye drops"],["Nose drops"],["Throat lozenges"],["Tissues"],["Lotion"]]},
+ {g:"Personal & travel",items:[["Personal hygiene items"],["Hygiene wipes"],["Makeup"],["Mints"],["Gum"],["Tide and dryer sheets"],["Travel pillow"],["Plug-in headphones for the plane"],["Sleep mask"],["Book"]]}
+];
+const PACK_N=PACK.reduce((a,g)=>a+g.items.length,0);
 
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -249,7 +278,7 @@ function home(){
   <div class="tiles">
     <button class="tile" data-go="stays"><b>Stays &amp; travel</b><span>Hotels, flights, car</span></button>
     <button class="tile" data-go="costs"><b>Costs</b><span>Activity prices</span></button>
-    <button class="tile" data-go="packing"><b>Packing</b><span>${PACK.length} items so far</span></button>
+    <button class="tile" data-go="packing"><b>Packing</b><span>${PACK_N} items, Monica's list</span></button>
     <button class="tile" data-go="links"><b>Links</b><span>${Object.keys(L).length} places</span></button>
   </div>
   <p class="foot">Built from the Zion trip spreadsheet. Items marked TBD aren't filled in there yet.</p>`;
@@ -296,11 +325,15 @@ function costs(){
   <section><div class="tscroll"><table>${EXTRAS.map(r=>`<tr><td>${esc(r[0])}</td><td class="num">${esc(r[1])}</td></tr>`).join("")}</table></div></section>`;
 }
 function packing(){
-  let saved={}; try{saved=JSON.parse(localStorage.getItem("zion-pack")||"{}")}catch(e){}
-  $("#view").innerHTML=`${back}<div class="dhead"><div class="eyebrow">Essentials</div><h2>Packing</h2></div>
-  <section><ul class="checks">${PACK.map((p,i)=>`<li><label><input type="checkbox" id="pk${i}" data-k="${esc(p)}" ${saved[p]?"checked":""}><span>${esc(p)}</span></label></li>`).join("")}</ul>
-  <p class="foot">Check marks are saved on this phone only.</p></section>`;
-  document.querySelectorAll(".checks input").forEach(cb=>cb.addEventListener("change",()=>{saved[cb.dataset.k]=cb.checked;try{localStorage.setItem("zion-pack",JSON.stringify(saved))}catch(e){}}));
+  let saved={}; try{saved=JSON.parse(localStorage.getItem("zion-pack2")||"{}")}catch(e){}
+  const key=(g,t)=>g+"|"+t;
+  const done=g=>g.items.filter(([t])=>saved[key(g.g,t)]).length;
+  $("#view").innerHTML=`${back}<div class="dhead"><div class="eyebrow">Monica's list · ${PACK_N} items</div><h2>Packing</h2></div>
+  <section><div class="tip">${esc(PACK_TIP)}</div></section>
+  ${PACK.map((g,gi)=>`<section><h3>${esc(g.g)} <span class="pc" id="pc${gi}">${done(g)}/${g.items.length}</span></h3><ul class="checks">${g.items.map(([t,n],i)=>`<li><label><input type="checkbox" id="pk${gi}_${i}" data-g="${gi}" data-k="${esc(key(g.g,t))}" ${saved[key(g.g,t)]?"checked":""}><span>${esc(t)}${n?`<small>${esc(n)}</small>`:""}</span></label></li>`).join("")}</ul></section>`).join("")}
+  <p class="foot">Check marks are saved on this phone only.</p>`;
+  document.querySelectorAll(".checks input").forEach(cb=>cb.addEventListener("change",()=>{saved[cb.dataset.k]=cb.checked;try{localStorage.setItem("zion-pack2",JSON.stringify(saved))}catch(e){}
+    const g=PACK[cb.dataset.g];$("#pc"+cb.dataset.g).textContent=`${done(g)}/${g.items.length}`;}));
 }
 function links(){
   $("#view").innerHTML=`${back}<div class="dhead"><div class="eyebrow">Bookmarks</div><h2>Links</h2></div>
